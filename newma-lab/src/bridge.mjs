@@ -98,8 +98,11 @@ export function createNewmaCumoraBridge({
 
   const executions = new Map();
 
-  function dispatch(input, { signal } = {}) {
+  function dispatch(input, { signal, onProgress } = {}) {
     const task = normalizeTaskEnvelope(input);
+    if (onProgress !== undefined && typeof onProgress !== "function") {
+      throw new TypeError("onProgress must be a function");
+    }
     const existing = executions.get(task.idempotency_key);
     if (existing) {
       if (existing.taskId !== task.task_id) {
@@ -107,12 +110,12 @@ export function createNewmaCumoraBridge({
       }
       return existing.promise;
     }
-    const promise = run(task, { signal });
+    const promise = run(task, { signal, onProgress });
     executions.set(task.idempotency_key, { taskId: task.task_id, promise });
     return promise;
   }
 
-  async function run(task, { signal }) {
+  async function run(task, { signal, onProgress }) {
     await publishEvent(roomEvent("newma.task.queued", task, now, {
       objective: task.objective,
       assignee_refs: task.assignee_refs,
@@ -122,6 +125,7 @@ export function createNewmaCumoraBridge({
     let progressSequence = 0;
     const reportProgress = async (input) => {
       const progress = normalizeProgress(input, ++progressSequence);
+      if (onProgress) await onProgress(structuredClone(progress));
       await publishEvent(
         roomEvent("newma.task.progress", task, now, progress),
       );
@@ -140,7 +144,7 @@ export function createNewmaCumoraBridge({
         roomEvent(`newma.task.${result.outcome}`, task, now, result),
       );
       return { state: result.outcome, task_id: task.task_id, result };
-    } catch (error) {
+    } catch (_error) {
       const result = {
         outcome: "failed",
         summary: signal?.aborted ? "Agent 执行已取消" : "Agent 执行失败",

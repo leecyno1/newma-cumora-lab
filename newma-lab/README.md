@@ -17,6 +17,11 @@ The fork keeps `main` as the clean upstream mirror. Newma-owned commits live on
 - Results carry immutable Newma artifact references instead of file paths or
   download URLs.
 - An idempotency key prevents the same task from starting twice.
+- A thin Social mapper accepts only atomically claimed tasks and derives the
+  idempotency key from `task.id + claim_generation`.
+- The mapper plugs into Newma Social's injected `executeTask` boundary and
+  relays progress without copying leases, private steering, credentials, or raw
+  room history into Hermes.
 
 ## Authority map
 
