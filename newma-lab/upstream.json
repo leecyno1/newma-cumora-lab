@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "repository": "https://github.com/yetone/cumora",
+  "fork": "https://github.com/leecyno1/newma-cumora-lab",
+  "default_branch": "main",
+  "mirror_branch": "main",
+  "integration_branch": "newma-lab",
+  "baseline_sha": "983110d399475cc5686979ebcbf8387dba5e3b19",
+  "baseline_version": "0.7.0",
+  "reviewed_at": "2026-08-29",
+  "allowed_patch_roots": [
+    "AGENTS.md",
+    "newma-lab/",
+    ".github/workflows/newma-lab-"
+  ]
+}

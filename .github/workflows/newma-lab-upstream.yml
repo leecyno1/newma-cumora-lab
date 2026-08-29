@@ -1,0 +1,38 @@
+name: Newma Cumora Lab
+
+on:
+  pull_request:
+    paths:
+      - "AGENTS.md"
+      - "newma-lab/**"
+      - ".github/workflows/newma-lab-*"
+  push:
+    paths:
+      - "AGENTS.md"
+      - "newma-lab/**"
+      - ".github/workflows/newma-lab-*"
+  schedule:
+    - cron: "20 2 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  contract-and-upstream:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Fetch Cumora upstream
+        run: |
+          git remote add upstream https://github.com/yetone/cumora.git 2>/dev/null || git remote set-url upstream https://github.com/yetone/cumora.git
+          git fetch upstream main --tags
+      - name: Test Newma bridge contract
+        run: node --test newma-lab/test/*.test.mjs
+      - name: Check upstream distance and patch boundary
+        run: |
+          node newma-lab/scripts/upstream-status.mjs --json | tee newma-upstream-status.json
+          cat newma-upstream-status.json >> "$GITHUB_STEP_SUMMARY"
+
