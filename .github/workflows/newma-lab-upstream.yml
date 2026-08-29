@@ -35,4 +35,3 @@ jobs:
         run: |
           node newma-lab/scripts/upstream-status.mjs --json | tee newma-upstream-status.json
           cat newma-upstream-status.json >> "$GITHUB_STEP_SUMMARY"
-

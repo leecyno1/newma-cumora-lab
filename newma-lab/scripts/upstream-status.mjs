@@ -107,4 +107,3 @@ function allowed(path, prefix) {
   if (prefix.endsWith("-")) return path.startsWith(prefix);
   return path === prefix;
 }
-

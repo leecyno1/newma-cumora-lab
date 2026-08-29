@@ -128,4 +128,3 @@ test("executor failures return a stable product-safe room event", async () => {
   assert.equal(events.at(-1).kind, "newma.task.failed");
   assert.equal(JSON.stringify(events).includes("provider token"), false);
 });
-

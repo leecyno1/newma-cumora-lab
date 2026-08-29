@@ -32,4 +32,3 @@ Newma production authority or release source.
   a moving upstream branch.
 - Prefer adapters and contracts over edits to Cumora auth, database, runtime,
   or client cores.
-
